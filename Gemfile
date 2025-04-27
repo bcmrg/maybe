@@ -27,6 +27,7 @@ gem "hotwire_combobox"
 
 # Background Jobs
 gem "sidekiq"
+gem "sidekiq-cron"
 
 # Monitoring
 gem "vernier"
@@ -64,6 +65,9 @@ gem "activerecord-import"
 # AI
 gem "ruby-openai"
 
+# File Processing
+gem "roo", "~> 2.10.0"
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
   gem "brakeman", require: false
@@ -76,6 +80,7 @@ end
 group :development do
   gem "hotwire-livereload"
   gem "letter_opener"
+  gem "letter_opener_web"
   gem "ruby-lsp-rails"
   gem "web-console"
   gem "faker"

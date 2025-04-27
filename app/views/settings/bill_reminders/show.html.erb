@@ -1,0 +1,83 @@
+<%= content_for :page_title, "Bill Reminder Settings" %>
+
+<%= settings_section title: "Bill Reminders", subtitle: "Configure how and when you want to be notified about upcoming bills" do %>
+  <div>
+    <%= styled_form_with model: @reminder_preference, url: settings_bill_reminders_path, class: "space-y-6", data: { controller: "auto-submit-form" } do |form| %>
+      
+      <%# Reminder Days Selection %>
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-primary">Remind me before due date</label>
+        <div class="flex flex-wrap gap-3">
+          <% [7, 3, 1, 0].each do |days| %>
+            <div class="flex items-center gap-2">
+              <%= form.check_box :remind_days, 
+                  { multiple: true, 
+                    checked: @reminder_preference.remind_days.include?(days),
+                    data: { auto_submit_form_target: "auto" } }, 
+                  days, 
+                  nil %>
+              <label class="text-sm text-secondary">
+                <%= days.zero? ? "On due date" : "#{days} days before" %>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Overdue Notifications %>
+      <div class="space-y-2">
+        <div class="flex items-center gap-2">
+          <%= form.check_box :send_overdue_reminders, 
+              { data: { auto_submit_form_target: "auto" } } %>
+          <label class="text-sm font-medium text-primary">Send overdue notifications</label>
+        </div>
+        <p class="text-xs text-secondary pl-7">Get notified when bills are past their due date</p>
+      </div>
+
+      <%# Recipients %>
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-primary">Who should receive reminders?</label>
+        <div class="space-y-2">
+          <% Current.family.users.each do |user| %>
+            <div class="flex items-center gap-2">
+              <%= form.check_box :reminder_recipients,
+                  { multiple: true, 
+                    checked: @reminder_preference.reminder_recipients.include?(user.email),
+                    data: { auto_submit_form_target: "auto" } },
+                  user.email,
+                  nil %>
+              <label class="text-sm text-secondary">
+                <%= user.display_name %> (<%= user.email %>)
+              </label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Email Preferences %>
+      <div class="space-y-2">
+        <%= form.select :digest_frequency,
+            options_for_select(
+              [
+                ["Send individual emails for each bill", "individual"],
+                ["Daily summary of upcoming bills", "daily"],
+                ["Weekly summary of upcoming bills", "weekly"]
+              ],
+              @reminder_preference.digest_frequency
+            ),
+            { label: "Email Frequency" },
+            { data: { auto_submit_form_target: "auto" } } %>
+      </div>
+    <% end %>
+
+    <div class="mt-8 flex items-center gap-4">
+      <%= button_to test_reminder_settings_bill_reminders_path,
+          method: :post,
+          class: "btn btn--secondary flex items-center gap-2" do %>
+        <%= lucide_icon "mail", class: "w-4 h-4" %>
+        <span>Send Test Reminder</span>
+      <% end %>
+      <p class="text-xs text-secondary">Send a test reminder to verify your settings</p>
+    </div>
+  </div>
+<% end %> 

@@ -50,6 +50,9 @@ Rails.application.routes.draw do
     end
     resource :billing, only: :show
     resource :security, only: :show
+    resource :bill_reminders, only: [:show, :update] do
+      post :test_reminder, on: :collection
+    end
   end
 
   resource :subscription, only: %i[new show] do
@@ -75,6 +78,12 @@ Rails.application.routes.draw do
     get :picker, on: :collection
 
     resources :budget_categories, only: %i[index show update]
+  end
+
+  resources :bills_and_subscriptions, path: 'bills' do
+    member do
+      post :mark_paid
+    end
   end
 
   resources :family_merchants, only: %i[index new create edit update destroy]
@@ -212,4 +221,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "pages#dashboard"
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 end

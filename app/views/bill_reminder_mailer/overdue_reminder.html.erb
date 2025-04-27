@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1 style="color: #dc2626;">Bill Payment Overdue</h1>
+    
+    <p>Hello <%= @user.display_name %>,</p>
+
+    <p>This is an important notice about an overdue bill payment:</p>
+
+    <div style="margin: 20px 0; padding: 15px; border: 1px solid #dc2626; border-radius: 5px; background-color: #fef2f2;">
+      <h2 style="margin-top: 0; color: #dc2626;"><%= @bill.name %></h2>
+      <p><strong>Due Date:</strong> <%= @bill.next_due_date.strftime('%B %d, %Y') %> (<%= (Date.current - @bill.next_due_date).to_i %> days overdue)</p>
+      <p><strong>Amount:</strong> <%= number_to_currency(@bill.amount, unit: @bill.currency) %></p>
+      <% if @bill.account %>
+        <p><strong>Pay From:</strong> <%= @bill.account.name %></p>
+      <% end %>
+    </div>
+
+    <p><strong>Please take immediate action to settle this payment to avoid any late fees or service interruptions.</strong></p>
+
+    <p>Best regards,<br>Maybe Team</p>
+  </body>
+</html> 

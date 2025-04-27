@@ -69,3 +69,6 @@ coverage
 node_modules
 
 compose.yml
+
+# Ignore Bancolombia test fixtures
+test/fixtures/files/imports/bancolombia-*.csv

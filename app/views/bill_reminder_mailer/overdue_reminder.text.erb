@@ -1,0 +1,14 @@
+Hello <%= @user.display_name %>,
+
+URGENT: OVERDUE BILL PAYMENT - <%= @bill.name %>
+
+This is an important notice about an overdue bill payment:
+
+Due Date: <%= @bill.next_due_date.strftime('%B %d, %Y') %> (<%= (Date.current - @bill.next_due_date).to_i %> days overdue)
+Amount: <%= number_to_currency(@bill.amount, unit: @bill.currency) %>
+<% if @bill.account %>Pay From: <%= @bill.account.name %><% end %>
+
+IMPORTANT: Please take immediate action to settle this payment to avoid any late fees or service interruptions.
+
+Best regards,
+Maybe Team 

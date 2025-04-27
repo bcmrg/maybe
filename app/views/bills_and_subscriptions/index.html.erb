@@ -1,0 +1,134 @@
+<%# Page header %>
+<header class="flex items-center justify-between gap-4 mb-8">
+  <div>
+    <h1 class="text-2xl font-medium text-primary mb-1">Bills & Subscriptions</h1>
+    <p class="text-secondary">Track and manage your recurring bills and subscriptions</p>
+  </div>
+
+  <%= link_to new_bills_and_subscription_path, class: "btn btn--primary flex items-center justify-center gap-2 rounded-full md:rounded-lg w-9 h-9 md:w-auto md:h-auto", data: { turbo_frame: :modal } do %>
+    <span class="flex items-center justify-center">
+      <%= lucide_icon("plus", class: "w-5 h-5") %>
+    </span>
+    <p class="text-sm font-medium hidden md:block">New Bill</p>
+  <% end %>
+</header>
+
+<%# Summary %>
+<div class="grid grid-cols-1 md:grid-cols-4 bg-container rounded-xl shadow-border-xs md:divide-x divide-y md:divide-y-0 divide-alpha-black-100 mb-6">
+  <div class="p-4 space-y-2">
+    <p class="text-sm text-secondary">Overdue</p>
+    <p class="text-destructive font-medium text-xl"><%= format_money @overdue_total %></p>
+  </div>
+  <div class="p-4 space-y-2">
+    <p class="text-sm text-secondary">Due soon</p>
+    <p class="text-primary font-medium text-xl"><%= format_money @upcoming_total %></p>
+  </div>
+  <div class="p-4 space-y-2">
+    <p class="text-sm text-secondary">Due this month</p>
+    <p class="text-primary font-medium text-xl"><%= format_money @due_this_month_total %></p>
+  </div>
+  <div class="p-4 space-y-2">
+    <p class="text-sm text-secondary">Monthly average</p>
+    <p class="text-primary font-medium text-xl"><%= format_money @monthly_total %></p>
+  </div>
+</div>
+
+<%# Filters %>
+<div class="flex items-center gap-4 mb-6">
+  <div class="flex items-center gap-2">
+    <%= link_to bills_and_subscriptions_path(status: nil, category_id: params[:category_id]),
+          class: class_names("btn btn--ghost", "bg-container shadow-xs" => !params[:status]) do %>
+      <span>All</span>
+    <% end %>
+
+    <%= link_to bills_and_subscriptions_path(status: "active", category_id: params[:category_id]),
+          class: class_names("btn btn--ghost", "bg-container shadow-xs" => params[:status] == "active") do %>
+      <span>Active</span>
+    <% end %>
+
+    <%= link_to bills_and_subscriptions_path(status: "paused", category_id: params[:category_id]),
+          class: class_names("btn btn--ghost", "bg-container shadow-xs" => params[:status] == "paused") do %>
+      <span>Paused</span>
+    <% end %>
+  </div>
+
+  <div class="ml-auto">
+    <%= form_tag bills_and_subscriptions_path, method: :get, class: "flex items-center gap-2" do %>
+      <%= hidden_field_tag :status, params[:status] %>
+      <%= select_tag :category_id,
+            options_from_collection_for_select(Current.family.categories, :id, :name, params[:category_id]),
+            prompt: "All Categories",
+            class: "text-sm text-primary bg-container border border-alpha-black-100 rounded-lg py-2 pl-3 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-primary",
+            onchange: "this.form.submit()" %>
+    <% end %>
+  </div>
+</div>
+
+<% if @bills.any? %>
+  <div class="flex flex-col bg-container rounded-xl shadow-border-xs p-4">
+    <%# Table header %>
+    <div class="grid-cols-14 bg-container-inset rounded-xl px-5 py-3 text-xs uppercase font-medium text-secondary items-center mb-4 hidden md:grid">
+      <div class="col-span-8 flex items-center gap-4">
+        <p>bill</p>
+      </div>
+      <p class="col-span-2">category</p>
+      <p class="col-span-2 justify-self-end">amount</p>
+      <p class="col-span-2 justify-self-end">actions</p>
+    </div>
+
+    <%# Overdue bills %>
+    <% if @overdue_bills.any? %>
+      <div class="mb-6">
+        <h2 class="text-lg font-medium text-destructive mb-4 px-4">Overdue</h2>
+        <div class="space-y-2">
+          <%= render partial: "bill", collection: @overdue_bills %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Upcoming bills %>
+    <% if @upcoming_bills.any? %>
+      <div class="mb-6">
+        <h2 class="text-lg font-medium text-primary mb-4 px-4">Due Soon</h2>
+        <div class="space-y-2">
+          <%= render partial: "bill", collection: @upcoming_bills %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Due this month bills %>
+    <% if @due_this_month_bills.any? %>
+      <div class="mb-6">
+        <h2 class="text-lg font-medium text-primary mb-4 px-4">Due This Month</h2>
+        <div class="space-y-2">
+          <%= render partial: "bill", collection: @due_this_month_bills %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Other bills %>
+    <% if @other_bills.any? %>
+      <div>
+        <h2 class="text-lg font-medium text-primary mb-4 px-4">Other Bills</h2>
+        <div class="space-y-2">
+          <%= render partial: "bill", collection: @other_bills %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <%# Empty state %>
+  <div class="bg-container rounded-xl border border-alpha-black-25 shadow-xs p-6">
+    <div class="text-center py-8">
+      <div class="w-16 h-16 bg-surface-inset rounded-full flex items-center justify-center mx-auto mb-4">
+        <%= lucide_icon "calendar", class: "w-8 h-8 text-secondary" %>
+      </div>
+      <h3 class="text-lg font-medium text-primary mb-1">No bills or subscriptions yet</h3>
+      <p class="text-secondary mb-4">Start tracking your recurring expenses</p>
+      <%= link_to new_bills_and_subscription_path, class: "btn btn--primary inline-flex" do %>
+        <%= lucide_icon "plus", class: "w-5 h-5" %>
+        <span>Add Bill or Subscription</span>
+      <% end %>
+    </div>
+  </div>
+<% end %>

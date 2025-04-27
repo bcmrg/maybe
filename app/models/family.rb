@@ -17,6 +17,7 @@ class Family < ApplicationRecord
   has_many :accounts, dependent: :destroy
   has_many :plaid_items, dependent: :destroy
   has_many :invitations, dependent: :destroy
+  has_many :bills, class_name: "Bill", dependent: :destroy
 
   has_many :imports, dependent: :destroy
 
@@ -33,8 +34,12 @@ class Family < ApplicationRecord
   has_many :budgets, dependent: :destroy
   has_many :budget_categories, through: :budgets
 
+  has_one :reminder_preference, class_name: 'FamilyReminderPreference', dependent: :destroy
+
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
   validates :date_format, inclusion: { in: DATE_FORMATS.map(&:last) }
+
+  after_create :create_reminder_preference
 
   def assigned_merchants
     merchant_ids = transactions.where.not(merchant_id: nil).pluck(:merchant_id).uniq
@@ -170,5 +175,11 @@ class Family < ApplicationRecord
 
   def self_hoster?
     Rails.application.config.app_mode.self_hosted?
+  end
+
+  private
+
+  def create_reminder_preference
+    build_reminder_preference.save
   end
 end

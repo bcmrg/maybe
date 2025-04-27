@@ -1,0 +1,13 @@
+# Schedule configuration for Sidekiq Cron
+#
+# Format for cron: MIN HOUR DOM MON DOW
+# - MIN: Minute (0-59)
+# - HOUR: Hour (0-23)
+# - DOM: Day of Month (1-31)
+# - MON: Month (1-12)
+# - DOW: Day of Week (0-6) (Sunday=0)
+
+bill_reminders:
+  cron: "0 8 * * *"  # Run at 8 AM every day
+  class: "BillReminderJob"
+  queue: high_priority 

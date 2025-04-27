@@ -1,0 +1,79 @@
+<%= tag.div id: dom_id(bill), class: "grid grid-cols-14 items-center text-primary text-sm font-medium p-4" do %>
+  <div class="col-span-8 flex items-center gap-4">
+    <%# Bill icon %>
+    <div class="w-10 h-10 bg-surface-inset rounded-lg flex items-center justify-center flex-shrink-0">
+      <%= lucide_icon "receipt", class: "w-5 h-5 text-secondary" %>
+    </div>
+
+    <%# Bill details %>
+    <div class="min-w-0">
+      <div class="flex items-center gap-2 mb-1">
+        <h3 class="text-primary truncate">
+          <%= link_to bill.name, bills_and_subscription_path(bill), class: "hover:underline", data: { turbo_frame: :drawer } %>
+        </h3>
+        <% if bill.paused? %>
+          <div class="flex items-center gap-1 text-secondary text-xs bg-surface-inset px-2 py-0.5 rounded">
+            <%= lucide_icon "pause", class: "w-3 h-3" %>
+            <span>Paused</span>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="flex items-center gap-4 text-secondary text-xs">
+        <div class="flex items-center gap-1">
+          <%= lucide_icon "calendar", class: "w-4 h-4" %>
+          <span><%= bill.frequency.titleize %></span>
+        </div>
+
+        <% if bill.account %>
+          <div class="flex items-center gap-1">
+            <%= lucide_icon "credit-card", class: "w-4 h-4" %>
+            <span><%= bill.account.name %></span>
+          </div>
+        <% end %>
+
+        <div class="text-xs">
+          <% if bill.overdue? %>
+            <span class="text-destructive">Due <%= time_ago_in_words(bill.next_due_date) %> ago</span>
+            <span class="text-secondary ml-1">(<%= l(bill.next_due_date, format: :long) %>)</span>
+          <% else %>
+            <span class="text-secondary">Due in <%= time_ago_in_words(bill.next_due_date) %></span>
+            <span class="text-secondary ml-1">(<%= l(bill.next_due_date, format: :long) %>)</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Category %>
+  <div class="hidden md:flex items-center gap-1 col-span-2">
+    <% if bill.category %>
+      <%= render partial: "categories/badge", locals: { category: bill.category } %>
+    <% else %>
+      <%= render partial: "categories/badge", locals: { category: nil } %>
+    <% end %>
+  </div>
+
+  <%# Amount %>
+  <div class="col-span-2 md:col-span-2 text-right">
+    <div class="text-primary font-medium">
+      <%= format_money(bill.amount_money) %>
+    </div>
+  </div>
+
+  <%# Actions %>
+  <div class="col-span-2 md:col-span-2 flex items-center justify-end">
+    <% unless bill.paused? %>
+      <%= link_to bills_and_subscription_path(bill),
+              class: class_names(
+                "btn btn--sm flex items-center gap-1",
+                "btn--primary" => bill.overdue?,
+                "btn--secondary" => !bill.overdue?
+              ),
+              data: { turbo_frame: :modal } do %>
+        <%= lucide_icon "check", class: "w-4 h-4" %>
+        <span class="hidden md:inline">Mark Paid</span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %> 

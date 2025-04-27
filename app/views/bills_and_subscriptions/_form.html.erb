@@ -1,0 +1,83 @@
+<%= styled_form_with model: @bill, url: (@bill.new_record? ? bills_and_subscriptions_path : bills_and_subscription_path(@bill)), class: "space-y-4" do |f| %>
+  <% if @bill.errors.any? %>
+    <%= render "shared/form_errors", model: @bill %>
+  <% end %>
+
+  <%# Basic Information %>
+  <section class="space-y-3">
+    <%= f.text_field :name, 
+        class: "form-field__input", 
+        placeholder: "e.g. Netflix Subscription", 
+        required: true, 
+        label: "Name" %>
+
+    <div class="grid grid-cols-2 gap-2">
+      <div class="col-span-1">
+        <%= f.number_field :amount, 
+            class: "form-field__input", 
+            step: "0.01", 
+            min: "0", 
+            required: true, 
+            label: "Amount" %>
+      </div>
+      <div class="col-span-1">
+        <%= f.select :currency, 
+            Money::Currency.all.map { |code, data| [data["name"], data["iso_code"]] },
+            { selected: Current.family.currency, label: "Currency" },
+            { class: "form-field__input", required: true } %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <div class="col-span-1">
+        <%= f.select :frequency, 
+            Bill::FREQUENCIES.map { |f| [f.titleize, f] },
+            { prompt: "Select frequency", label: "Frequency" },
+            { class: "form-field__input", required: true } %>
+      </div>
+      <div class="col-span-1">
+        <%= f.date_field :start_date, 
+            class: "form-field__input", 
+            required: true, 
+            min: Entry.min_supported_date, 
+            max: 1.year.from_now.to_date, 
+            value: Date.current, 
+            label: "Start Date" %>
+      </div>
+    </div>
+
+    <%= f.select :status,
+        Bill::STATUSES.map { |s| [s.titleize, s] },
+        { prompt: "Select status", label: "Status" },
+        { class: "form-field__input", required: true } %>
+  </section>
+
+  <%# Details %>
+  <%= disclosure "Details", default_open: false do %>
+    <div class="space-y-3">
+      <%= f.date_field :next_due_date,
+          class: "form-field__input",
+          required: true,
+          min: Date.current,
+          max: 1.year.from_now.to_date,
+          label: "Next Due Date" %>
+
+      <%= f.collection_select :category_id, 
+          Current.family.categories.order(:name), 
+          :id, :name, 
+          { prompt: "Select a category", label: "Category" }, 
+          { class: "form-field__input" } %>
+
+      <%= f.collection_select :account_id, 
+          Current.family.accounts.order(:name), 
+          :id, :name,
+          { prompt: "Select payment account", label: "Payment Account" },
+          { class: "form-field__input" } %>
+    </div>
+  <% end %>
+
+  <%# Form Actions %>
+  <div class="flex items-center justify-end gap-4 mt-6">
+    <%= f.submit class: "btn btn--primary" %>
+  </div>
+<% end %> 

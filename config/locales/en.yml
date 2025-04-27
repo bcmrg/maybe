@@ -1,0 +1,22 @@
+en:
+  imports:
+    new:
+      title: "Import Data"
+      description: "Import your financial data from various sources"
+      sources: "Import Sources"
+      import_bancolombia_credit_card: "Import Bancolombia Credit Card"
+      resume: "Resume %{type}"
+    index:
+      title: "Imports"
+      new: "New Import"
+      imports: "Import History"
+  import:
+    configurations:
+      bancolombia_credit_card_import:
+        description: "We've pre-configured your Bancolombia credit card import settings. Please verify the column mappings below."
+        format_hint: "Expected format for Bancolombia credit card statements:"
+        column_hints:
+          date: "Date column should be in DD/MM/YYYY format"
+          description: "Description column contains transaction details"
+          amount: "Amount column contains transaction values"
+        date_format_label: "Date format" 

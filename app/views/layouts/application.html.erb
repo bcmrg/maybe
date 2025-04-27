@@ -45,6 +45,10 @@
           <li>
             <%= render "layouts/sidebar/nav_item", name: "Budgets", path: budgets_path, icon_key: "map" %>
           </li>
+
+          <li>
+            <%= render "layouts/sidebar/nav_item", name: "Bills", path: bills_and_subscriptions_path, icon_key: "calendar" %>
+          </li>
         </ul>
 
         <div class="lg:pl-2 lg:mt-auto lg:mx-auto">
@@ -124,6 +128,10 @@
 
         <li>
           <%= render "layouts/sidebar/nav_item", name: "Budgets", path: budgets_path, icon_key: "map" %>
+        </li>
+
+        <li>
+          <%= render "layouts/sidebar/nav_item", name: "Bills", path: bills_and_subscriptions_path, icon_key: "calendar" %>
         </li>
 
         <li>

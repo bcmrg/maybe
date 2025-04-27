@@ -1,0 +1,75 @@
+<%# Payment modal form %>
+<%= modal_form_wrapper title: "Confirm Payment" do %>
+  <%= form_with url: mark_paid_bills_and_subscription_path(@bill), method: :post, class: "space-y-4" do |f| %>
+    <%# Payment details %>
+    <div class="space-y-2">
+      <div class="flex items-center justify-between text-sm">
+        <span class="text-secondary">Bill</span>
+        <span class="text-primary font-medium"><%= @bill.name %></span>
+      </div>
+      <div class="flex items-center justify-between text-sm">
+        <span class="text-secondary">Full Amount</span>
+        <span class="text-primary font-medium"><%= format_money @bill.amount_money %></span>
+      </div>
+      <div class="flex items-center justify-between text-sm">
+        <span class="text-secondary">Category</span>
+        <span class="text-primary font-medium">
+          <% if @bill.category %>
+            <%= render partial: "categories/badge", locals: { category: @bill.category } %>
+          <% else %>
+            <%= render partial: "categories/badge", locals: { category: nil } %>
+          <% end %>
+        </span>
+      </div>
+    </div>
+
+    <div class="border-t border-alpha-black-100 my-4"></div>
+
+    <%# Payment amount %>
+    <div class="form-field">
+      <%= f.label :amount, "Payment Amount", class: "form-field__label" %>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="col-span-1">
+          <%= f.number_field :amount,
+              value: @bill.amount,
+              class: "form-field__input bg-container border border-alpha-black-100 focus:border-primary focus:ring-1 focus:ring-primary",
+              step: "0.01",
+              min: "0.01",
+              required: true %>
+        </div>
+        <div class="col-span-1">
+          <div class="form-field__input bg-surface-inset text-secondary">
+            <%= @bill.currency %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# Payment date %>
+    <div class="form-field">
+      <%= f.label :date, "Payment Date", class: "form-field__label" %>
+      <%= f.date_field :date,
+          value: Date.current,
+          class: "form-field__input bg-container border border-alpha-black-100 focus:border-primary focus:ring-1 focus:ring-primary",
+          required: true,
+          min: Entry.min_supported_date,
+          max: Date.current %>
+    </div>
+
+    <%# Payment account %>
+    <div class="form-field">
+      <%= f.label :account_id, "Payment Account", class: "form-field__label" %>
+      <%= f.collection_select :account_id,
+          Current.family.accounts.order(:name),
+          :id, :name,
+          { selected: @bill.account_id },
+          { class: "form-field__input bg-container border border-alpha-black-100 focus:border-primary focus:ring-1 focus:ring-primary appearance-none",
+            required: true } %>
+    </div>
+
+    <%# Form actions %>
+    <div class="flex items-center justify-end gap-4 mt-6">
+      <%= f.submit "Confirm Payment", class: "btn btn--primary" %>
+    </div>
+  <% end %>
+<% end %> 

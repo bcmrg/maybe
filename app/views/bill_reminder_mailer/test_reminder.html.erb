@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Test Bill Reminder</h1>
+    
+    <p>Hello <%= @user.display_name %>,</p>
+
+    <p>This is a test email to confirm your bill reminder settings are working correctly.</p>
+
+    <p>Your current reminder settings:</p>
+    <ul>
+      <li>Reminder days: <%= @reminder_preference.remind_days.join(", ") %> days before due date</li>
+      <li>Overdue notifications: <%= @reminder_preference.send_overdue_reminders? ? "Enabled" : "Disabled" %></li>
+      <li>Email frequency: <%= @reminder_preference.digest_frequency.titleize %></li>
+    </ul>
+
+    <p>If you received this email, your bill reminder notifications are properly configured.</p>
+
+    <p>Best regards,<br>Maybe Team</p>
+  </body>
+</html> 

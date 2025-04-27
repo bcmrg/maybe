@@ -55,6 +55,9 @@
       </div>
       <ul class="space-y-1">
         <li>
+          <%= render "settings/settings_nav_item", name: "Bill Reminders", path: settings_bill_reminders_path, icon: "bell" %>
+        </li>
+        <li>
           <%= render "settings/settings_nav_item", name: t(".tags_label"), path: tags_path, icon: "tags" %>
         </li>
         <li>

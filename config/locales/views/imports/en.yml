@@ -12,6 +12,14 @@ en:
     configurations:
       mint_import:
         date_format_label: Date format
+      bancolombia_import:
+        date_format_label: Date format
+        description: Import your transactions from a Bancolombia CSV export
+        format_hint: "Expected format: FECHA;DESCRIPCIÓN;VALOR"
+        column_hints:
+          date: "Date column should be labeled 'FECHA'"
+          description: "Description column should be labeled 'DESCRIPCIÓN'"
+          amount: "Amount column should be labeled 'VALOR'"
       show:
         description: Select the columns that correspond to each field in your CSV.
         title: Configure your import
@@ -78,6 +86,7 @@ en:
         of our import templates like Mint.
       import_accounts: Import accounts
       import_mint: Import from Mint
+      import_bancolombia: Import from Bancolombia
       import_portfolio: Import investments
       import_transactions: Import transactions
       resume: Resume %{type}

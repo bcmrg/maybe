@@ -1,0 +1,12 @@
+Hello <%= @user.display_name %>,
+
+BILL DUE SOON: <%= @bill.name %>
+
+Due Date: <%= @bill.next_due_date.strftime('%B %d, %Y') %> (in <%= (@bill.next_due_date - Date.current).to_i %> days)
+Amount: <%= number_to_currency(@bill.amount, unit: @bill.currency) %>
+<% if @bill.account %>Pay From: <%= @bill.account.name %><% end %>
+
+Please ensure you have sufficient funds available for this payment.
+
+Best regards,
+Maybe Team 

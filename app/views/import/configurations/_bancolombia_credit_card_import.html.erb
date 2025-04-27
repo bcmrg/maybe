@@ -1,0 +1,41 @@
+<%# locals: (import:) %>
+
+<div class="flex items-center justify-between border border-secondary rounded-lg bg-[#0033A0]/5 p-5 gap-4 mb-4">
+  <%= lucide_icon("check-circle", class: "w-5 h-5 text-[#0033A0]") %>
+  <p class="text-sm text-primary italic"><%= t(".description") %></p>
+</div>
+
+<div class="rounded-lg border border-secondary p-4 mb-4">
+  <p class="text-sm text-secondary font-medium mb-2"><%= t(".format_hint") %></p>
+  <ul class="text-xs text-secondary space-y-1">
+    <li><%= t(".column_hints.date") %></li>
+    <li><%= t(".column_hints.description") %></li>
+    <li><%= t(".column_hints.amount") %></li>
+  </ul>
+</div>
+
+<%= styled_form_with model: @import, url: import_configuration_path(@import), scope: :import, method: :patch, class: "space-y-4" do |form| %>
+  <div class="flex items-center gap-4">
+    <%= form.select :date_col_label, import.csv_headers, { include_blank: "Leave empty", label: "Date" }, required: true, disabled: import.complete? %>
+    <%= form.select :date_format, Family::DATE_FORMATS, { label: t(".date_format_label")}, label: true, required: true, disabled: import.complete? %>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <%= form.select :amount_col_label, import.csv_headers, { include_blank: "Leave empty", label: "Amount" }, required: true, disabled: import.complete? %>
+    <%= form.select :signage_convention, [["Incomes are negative", "inflows_negative"], ["Incomes are positive", "inflows_positive"]], { label: true }, disabled: import.complete? %>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <%= form.select :number_format, Import::NUMBER_FORMATS.keys, { label: "Format", prompt: "Select format" }, required: true %>
+  </div>
+
+  <% unless import.account.present? %>
+    <%= form.select :account_col_label, import.csv_headers, { include_blank: "Leave empty", label: "Account (optional)" }, disabled: import.complete? %>
+  <% end %>
+
+  <%= form.select :name_col_label, import.csv_headers, { include_blank: "Leave empty", label: "Name (optional)" }, disabled: import.complete? %>
+  <%= form.select :category_col_label, import.csv_headers, { include_blank: "Leave empty", label: "Category (optional)" }, disabled: import.complete? %>
+  <%= form.select :tags_col_label, import.csv_headers, { include_blank: "Leave empty", label: "Tags (optional)" }, disabled: import.complete? %>
+
+  <%= form.submit "Apply configuration", class: "w-full btn btn--primary", disabled: import.complete? %>
+<% end %> 

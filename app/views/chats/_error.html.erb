@@ -1,16 +1,21 @@
 <%# locals: (chat:) %>
 
 <div id="chat-error" class="px-3 py-2 bg-red-100 border border-red-500 rounded-lg">
-  <% if chat.debug_mode? %>
-    <div class="overflow-x-auto text-xs p-4 bg-red-200 rounded-md mb-2">
-      <code><%= chat.error %></code>
-    </div>
-  <% end %>
-
+  <% error = JSON.parse(chat.error) rescue nil %>
+  
   <div class="flex items-center justify-between gap-2">
-    <p class="text-xs text-red-500">Failed to generate response.  Please try again.</p>
+    <div class="flex-grow">
+      <p class="text-sm text-red-600 font-medium mb-1">Failed to generate response</p>
+      <p class="text-xs text-red-500"><%= error&.dig("message") || "An unknown error occurred" %></p>
+      
+      <% if chat.debug_mode? && error&.dig("details").present? %>
+        <div class="overflow-x-auto text-xs p-2 mt-2 bg-red-50 rounded-md font-mono">
+          <code class="whitespace-pre-wrap"><%= JSON.pretty_generate(error["details"]) rescue error["details"] %></code>
+        </div>
+      <% end %>
+    </div>
 
-    <%= button_to retry_chat_path(chat), method: :post, class: "btn btn--primary" do %>
+    <%= button_to retry_chat_path(chat), method: :post, class: "btn btn--primary shrink-0" do %>
       <span>Retry</span>
     <% end %>
   </div>

@@ -1,0 +1,13 @@
+Hello <%= @user.display_name %>,
+
+This is a test email to confirm your bill reminder settings are working correctly.
+
+Your current reminder settings:
+* Reminder days: <%= @reminder_preference.remind_days.join(", ") %> days before due date
+* Overdue notifications: <%= @reminder_preference.send_overdue_reminders? ? "Enabled" : "Disabled" %>
+* Email frequency: <%= @reminder_preference.digest_frequency.titleize %>
+
+If you received this email, your bill reminder notifications are properly configured.
+
+Best regards,
+Maybe Team 

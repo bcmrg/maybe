@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Bill Due Soon</h1>
+    
+    <p>Hello <%= @user.display_name %>,</p>
+
+    <div style="margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 5px;">
+      <h2 style="margin-top: 0;"><%= @bill.name %></h2>
+      <p><strong>Due Date:</strong> <%= @bill.next_due_date.strftime('%B %d, %Y') %> (in <%= (@bill.next_due_date - Date.current).to_i %> days)</p>
+      <p><strong>Amount:</strong> <%= number_to_currency(@bill.amount, unit: @bill.currency) %></p>
+      <% if @bill.account %>
+        <p><strong>Pay From:</strong> <%= @bill.account.name %></p>
+      <% end %>
+    </div>
+
+    <p>Please ensure you have sufficient funds available for this payment.</p>
+
+    <p>Best regards,<br>Maybe Team</p>
+  </body>
+</html> 

@@ -48,12 +48,23 @@ class Provider
     # Override to set class-level error transformation for methods using `with_provider_response`
     def default_error_transformer(error)
       if error.is_a?(Faraday::Error)
+        error_details = error.response&.dig(:body)
+        error_message = if error_details.is_a?(String)
+          begin
+            JSON.parse(error_details)["error"]["message"]
+          rescue
+            error_details
+          end
+        else
+          error.message
+        end
+
         self.class::Error.new(
-          error.message,
-          details: error.response&.dig(:body),
+          error_message,
+          details: error_details
         )
       else
-        self.class::Error.new(error.message)
+        self.class::Error.new(error.message, details: error.respond_to?(:details) ? error.details : nil)
       end
     end
 end
