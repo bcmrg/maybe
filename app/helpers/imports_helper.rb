@@ -38,8 +38,14 @@ module ImportsHelper
   end
 
   def permitted_import_configuration_path(import)
-    if permitted_import_types.include?(import.type.underscore)
-      "import/configurations/#{import.type.underscore}"
+    # Convert namespaced type (e.g. BancolombiaImport::Savings) to path format (e.g. bancolombia_import/savings)
+    type_path = import.type.underscore
+    
+    # Convert path format to check format (e.g. bancolombia_import_savings)
+    type_check = type_path.tr("/", "_")
+    
+    if permitted_import_types.include?(type_check)
+      "import/configurations/#{type_path}"
     else
       raise "Unknown import type: #{import.type}"
     end
@@ -62,7 +68,14 @@ module ImportsHelper
 
   private
     def permitted_import_types
-      %w[transaction_import trade_import account_import mint_import bancolombia_import bancolombia_credit_card_import]
+      %w[
+        transaction_import 
+        trade_import 
+        account_import 
+        mint_import 
+        bancolombia_import_savings 
+        bancolombia_import_credit_card
+      ]
     end
 
     DryRunResource = Struct.new(:label, :icon, :text_class, :bg_class, keyword_init: true)

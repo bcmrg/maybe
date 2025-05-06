@@ -13,13 +13,21 @@ en:
       mint_import:
         date_format_label: Date format
       bancolombia_import:
-        date_format_label: Date format
-        description: Import your transactions from a Bancolombia CSV export
-        format_hint: "Expected format: FECHA;DESCRIPCIÓN;VALOR"
-        column_hints:
-          date: "Date column should be labeled 'FECHA'"
-          description: "Description column should be labeled 'DESCRIPCIÓN'"
-          amount: "Amount column should be labeled 'VALOR'"
+        savings:
+          date_format_label: Date format
+          description: Import your transactions from a Bancolombia CSV export
+          format_hint: "Expected format: FECHA;DESCRIPCIÓN;VALOR"
+          column_hints:
+            date: "Date column should be labeled 'FECHA'"
+            description: "Description column should be labeled 'DESCRIPCIÓN'"
+            amount: "Amount column should be labeled 'VALOR'"
+        credit_card:
+          description: "We've pre-configured your Bancolombia credit card import settings. Please verify the column mappings below."
+          format_hint: "Expected format for Bancolombia credit card statements:"
+          column_hints:
+            date: "Date column should be in DD/MM/YYYY format"
+            description: "Description column contains transaction details"
+            amount: "Amount column contains transaction values"
       show:
         description: Select the columns that correspond to each field in your CSV.
         title: Configure your import
@@ -27,42 +35,15 @@ en:
         date_format_label: Date format
       transaction_import:
         date_format_label: Date format
-    confirms:
-      mappings:
-        create_account: Create account
-        csv_mapping_label: "%{mapping} in CSV"
-        maybe_mapping_label: "%{mapping} in Maybe"
-        no_accounts: You don't have any accounts yet. Please create an account that
-          we can use for (unassigned) rows in your CSV or go back to the Clean step
-          and provide an account name we can use.
-        rows_label: Rows
-        unassigned_account: Need to create a new account for unassigned rows?
-      show:
-        account_mapping_description: Assign all of your imported file's accounts to
-          Maybe's existing accounts.  You can also add new accounts or leave them
-          uncategorized.
-        account_mapping_title: Assign your accounts
-        account_type_mapping_description: Assign all of your imported file's account
-          types to Maybe's
-        account_type_mapping_title: Assign your account types
-        category_mapping_description: Assign all of your imported file's categories
-          to Maybe's existing categories.  You can also add new categories or leave
-          them uncategorized.
-        category_mapping_title: Assign your categories
-        tag_mapping_description: Assign all of your imported file's tags to Maybe's
-          existing tags.  You can also add new tags or leave them uncategorized.
-        tag_mapping_title: Assign your tags
     uploads:
       show:
-        description: Paste or upload your CSV file below.  Please review the instructions
-          in the table below before beginning.
-        instructions_1: Below is an example CSV with columns available for import.
-        instructions_2: Your CSV must have a header row
-        instructions_3: You may name your columns anything you like.  You will map
-          them at a later step.
-        instructions_4: Columns marked with an asterisk (*) are required data.
-        instructions_5: No commas, no currency symbols, and no parentheses in numbers.
-        title: Import your data
+        description: "Paste or upload your file below. Please review the instructions in the table below before beginning."
+        instructions_1: "Below is an example file with columns available for import."
+        instructions_2: "Your file must have a header row"
+        instructions_3: "You may name your columns anything you like. You will map them at a later step."
+        instructions_4: "Columns marked with an asterisk (*) are required data."
+        instructions_5: "No commas, no currency symbols, and no parentheses in numbers."
+        title: "Import your data"
   imports:
     empty:
       message: No imports yet.
@@ -86,12 +67,15 @@ en:
         of our import templates like Mint.
       import_accounts: Import accounts
       import_mint: Import from Mint
-      import_bancolombia: Import from Bancolombia
+      import_bancolombia: Import from Bancolombia Savings
       import_portfolio: Import investments
       import_transactions: Import transactions
-      resume: Resume %{type}
+      import_bancolombia_credit_card: "Import Bancolombia Credit Card"
+      convert_excel: "Convert Excel to CSV"
+      resume: "Resume %{type}"
       sources: Sources
-      title: New CSV Import
+      title: "Import Data"
+      utilities: "Utilities"
     ready:
       description: Here's a summary of the new items that will be added to your account
         once you publish this import.

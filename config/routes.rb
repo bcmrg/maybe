@@ -20,6 +20,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :utilities do
+    resources :excel_conversions, only: [:index] do
+      post :convert, on: :collection
+    end
+  end
+
   get "changelog", to: "pages#changelog"
   get "feedback", to: "pages#feedback"
   get "early-access", to: "pages#early_access"

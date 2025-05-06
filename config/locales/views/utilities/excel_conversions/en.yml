@@ -1,0 +1,12 @@
+---
+en:
+  utilities:
+    excel_conversions:
+      index:
+        title: "Convert Excel to CSV"
+        description: "Select your file type and upload your Excel file to convert it to CSV format."
+        file_type_label: "File Type"
+        bancolombia_savings: "Bancolombia Savings Statement"
+        bancolombia_credit_card: "Bancolombia Credit Card Statement"
+        upload_instructions: "Upload your Excel file"
+        convert_button: "Convert to CSV" 

@@ -10,7 +10,7 @@ class BancolombiaImportTest < ActiveSupport::TestCase
   end
 
   test "sets correct mappings on create" do
-    import = BancolombiaImport.create!(family: @family)
+    import = BancolombiaImport::Savings.create!(family: @family)
 
     assert_equal "inflows_positive", import.signage_convention
     assert_equal "FECHA", import.date_col_label
@@ -28,7 +28,7 @@ class BancolombiaImportTest < ActiveSupport::TestCase
       01/01/2024;PAGO AUTOM TC VISA;-40000.00
     CSV
 
-    import = BancolombiaImport.create!(family: @family, raw_file_str: csv_content)
+    import = BancolombiaImport::Savings.create!(family: @family, raw_file_str: csv_content)
     import.generate_rows_from_csv
 
     assert_equal 2, import.rows.count
@@ -52,7 +52,7 @@ class BancolombiaImportTest < ActiveSupport::TestCase
       01/01/2024;ABONO INTERESES AHORROS;26.13
     CSV
 
-    import = BancolombiaImport.create!(family: @family, raw_file_str: csv_content)
+    import = BancolombiaImport::Savings.create!(family: @family, raw_file_str: csv_content)
     import.generate_rows_from_csv
 
     # Create account mapping
@@ -80,7 +80,7 @@ class BancolombiaImportTest < ActiveSupport::TestCase
       01/01/2024;LARGE DEPOSIT;1,234,567.89
     CSV
 
-    import = BancolombiaImport.create!(family: @family, raw_file_str: csv_content)
+    import = BancolombiaImport::Savings.create!(family: @family, raw_file_str: csv_content)
     import.generate_rows_from_csv
 
     row = import.rows.first
@@ -93,7 +93,7 @@ class BancolombiaImportTest < ActiveSupport::TestCase
       ABONO INTERESES AHORROS;26.13
     CSV
 
-    import = BancolombiaImport.create(family: @family, raw_file_str: csv_content)
+    import = BancolombiaImport::Savings.create(family: @family, raw_file_str: csv_content)
     refute import.valid?
     assert_includes import.errors.full_messages, "Required columns missing: date"
   end

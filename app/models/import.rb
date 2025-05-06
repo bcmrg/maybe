@@ -1,5 +1,5 @@
 class Import < ApplicationRecord
-  TYPES = %w[TransactionImport TradeImport AccountImport MintImport BancolombiaImport BancolombiaCreditCardImport].freeze
+  TYPES = %w[TransactionImport TradeImport AccountImport MintImport BancolombiaImport::Savings BancolombiaImport::CreditCard].freeze
   SIGNAGE_CONVENTIONS = %w[inflows_positive inflows_negative]
   SEPARATORS = [ [ "Comma (,)", "," ], [ "Semicolon (;)", ";" ] ].freeze
 
