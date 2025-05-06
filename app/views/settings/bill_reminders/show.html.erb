@@ -71,11 +71,17 @@
     <% end %>
 
     <div class="mt-8 flex items-center gap-4">
-      <%= button_to test_reminder_settings_bill_reminders_path,
+      <%= button_to test_due_reminder_settings_bill_reminders_path,
           method: :post,
           class: "btn btn--secondary flex items-center gap-2" do %>
         <%= lucide_icon "mail", class: "w-4 h-4" %>
-        <span>Send Test Reminder</span>
+        <span>Send Test Due Reminder</span>
+      <% end %>
+      <%= button_to test_overdue_reminder_settings_bill_reminders_path,
+          method: :post,
+          class: "btn btn--secondary flex items-center gap-2" do %>
+        <%= lucide_icon "alert-circle", class: "w-4 h-4" %>
+        <span>Send Test Overdue Reminder</span>
       <% end %>
       <p class="text-xs text-secondary">Send a test reminder to verify your settings</p>
     </div>

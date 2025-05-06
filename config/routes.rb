@@ -57,7 +57,8 @@ Rails.application.routes.draw do
     resource :billing, only: :show
     resource :security, only: :show
     resource :bill_reminders, only: [:show, :update] do
-      post :test_reminder, on: :collection
+      post :test_due_reminder, on: :collection
+      post :test_overdue_reminder, on: :collection
     end
   end
 

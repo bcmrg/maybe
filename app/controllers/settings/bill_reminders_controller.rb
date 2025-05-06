@@ -18,12 +18,22 @@ class Settings::BillRemindersController < ApplicationController
     end
   end
 
-  def test_reminder
+  def test_due_reminder
     @reminder_preference = Current.family.reminder_preference
-    BillReminderMailer.test_reminder(Current.user, @reminder_preference).deliver_now
+    BillReminderMailer.test_due_reminder(Current.user, @reminder_preference).deliver_now
 
     respond_to do |format|
-      format.html { redirect_to settings_bill_reminders_path, notice: "Test reminder sent." }
+      format.html { redirect_to settings_bill_reminders_path, notice: "Test due reminder sent." }
+      format.json { head :ok }
+    end
+  end
+
+  def test_overdue_reminder
+    @reminder_preference = Current.family.reminder_preference
+    BillReminderMailer.test_overdue_reminder(Current.user, @reminder_preference).deliver_now
+
+    respond_to do |format|
+      format.html { redirect_to settings_bill_reminders_path, notice: "Test overdue reminder sent." }
       format.json { head :ok }
     end
   end
