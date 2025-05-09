@@ -15,9 +15,11 @@ class BillReminderJobTest < ActiveJob::TestCase
       start_date: Date.current,
       next_due_date: Date.current # Will be set in each test
     )
+    @default_remind_days = [7, 3, 1, 0]
   end
 
-  test "sends reminder for due soon bills" do
+  test "sends reminder only when days_until_due matches remind_days" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @bill.update!(next_due_date: 3.days.from_now)
     @family.reminder_preference.reminder_recipients << @user
     assert_emails 1 do
@@ -28,9 +30,38 @@ class BillReminderJobTest < ActiveJob::TestCase
         assert_includes email.text_part.body.to_s, @bill.name
       end
     end
+    # Now set to a day not in remind_days
+    @bill.update!(next_due_date: 5.days.from_now)
+    assert_emails 0 do
+      perform_enqueued_jobs { BillReminderJob.perform_now }
+    end
   end
 
-  test "sends overdue reminder for overdue bills" do
+  test "does not send reminder if days_until_due is not in remind_days" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
+    @bill.update!(next_due_date: 4.days.from_now)
+    @family.reminder_preference.reminder_recipients << @user
+    assert_emails 0 do
+      perform_enqueued_jobs { BillReminderJob.perform_now }
+    end
+  end
+
+  test "does not send due soon reminders if remind_days is empty or nil" do
+    @family.reminder_preference.update!(remind_days: nil)
+    @bill.update!(next_due_date: 7.days.from_now)
+    @family.reminder_preference.reminder_recipients << @user
+    assert_emails 0 do
+      perform_enqueued_jobs { BillReminderJob.perform_now }
+    end
+    @family.reminder_preference.update!(remind_days: [])
+    @bill.update!(next_due_date: 1.day.from_now)
+    assert_emails 0 do
+      perform_enqueued_jobs { BillReminderJob.perform_now }
+    end
+  end
+
+  test "sends overdue reminder for overdue bills if flag is true" do
+    @family.reminder_preference.update!(send_overdue_reminders: true)
     @bill.update!(next_due_date: 2.days.ago)
     @family.reminder_preference.reminder_recipients << @user
     assert_emails 1 do
@@ -43,8 +74,19 @@ class BillReminderJobTest < ActiveJob::TestCase
     end
   end
 
+  test "does not send overdue reminder if send_overdue_reminders is false" do
+    @family.reminder_preference.update!(send_overdue_reminders: false)
+    @bill.update!(next_due_date: 2.days.ago)
+    @family.reminder_preference.reminder_recipients << @user
+    assert_emails 0 do
+      perform_enqueued_jobs { BillReminderJob.perform_now }
+    end
+  end
+
   test "does not send reminders when no recipients are set" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @family.reminder_preference.reminder_recipients.clear
+    @bill.update!(next_due_date: 3.days.from_now)
     assert_emails 0 do
       perform_enqueued_jobs do
         BillReminderJob.perform_now
@@ -52,7 +94,8 @@ class BillReminderJobTest < ActiveJob::TestCase
     end
   end
 
-  test "does not send reminder when no overdue or due soon bills exist" do
+  test "does not send reminder when no due bills exist for remind_days" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @bill.update!(next_due_date: 10.days.from_now)
     @family.reminder_preference.reminder_recipients << @user
     assert_emails 0 do
@@ -63,6 +106,7 @@ class BillReminderJobTest < ActiveJob::TestCase
   end
 
   test "does not send reminder for paused bills" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @bill.update!(status: "paused", next_due_date: 3.days.from_now)
     @family.reminder_preference.reminder_recipients << @user
     assert_emails 0 do
@@ -71,6 +115,7 @@ class BillReminderJobTest < ActiveJob::TestCase
   end
 
   test "sends reminder to multiple recipients" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @user = users(:family_admin)
     user2 = users(:family_member)
     @family.reminder_preference.reminder_recipients = [@user, user2]
@@ -80,7 +125,8 @@ class BillReminderJobTest < ActiveJob::TestCase
     end
   end
 
-  test "sends reminders only for due soon or overdue bills when multiple bills exist" do
+  test "sends reminders only for bills matching remind_days when multiple bills exist" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @bill.update!(next_due_date: 3.days.from_now)
     other_bill = @family.bills.create!(
       name: "Future Bill",
@@ -96,14 +142,15 @@ class BillReminderJobTest < ActiveJob::TestCase
     end
   end
 
-  test "bill due today is considered due soon, not overdue" do
+  test "bill due today is considered for remind_days 0" do
+    @family.reminder_preference.update!(remind_days: @default_remind_days)
     @bill.update!(next_due_date: Date.current)
     @family.reminder_preference.reminder_recipients << @user
     assert_emails 1 do
       perform_enqueued_jobs { BillReminderJob.perform_now }
       email = ActionMailer::Base.deliveries.last
       assert_includes email.subject, @bill.name
-      assert_includes email.subject.downcase, "due" # Should be a due soon subject, not overdue
+      assert_includes email.subject.downcase, "due"
     end
   end
 end

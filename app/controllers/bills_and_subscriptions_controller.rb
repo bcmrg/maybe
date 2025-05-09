@@ -181,6 +181,7 @@ class BillsAndSubscriptionsController < ApplicationController
         :next_due_date,
         :bill_type,
         :debt_account_id,
+        :notes,
         auto_match_rule: {}
       )
     end

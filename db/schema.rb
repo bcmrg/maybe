@@ -128,6 +128,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_26_025003) do
     t.string "category", default: "normal", null: false
     t.uuid "debt_account_id"
     t.string "bill_type", default: "normal", null: false
+    t.text "notes"
     t.index ["account_id"], name: "index_bills_on_account_id"
     t.index ["category"], name: "index_bills_on_category"
     t.index ["category_id"], name: "index_bills_on_category_id"

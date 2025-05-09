@@ -91,6 +91,12 @@
           :id, :name,
           { prompt: "Select payment account", label: "Payment Account" },
           { class: "form-field__input" } %>
+
+      <%= f.text_area :notes, 
+          class: "form-field__input min-h-[80px] resize-y", 
+          placeholder: "Add notes (e.g. payment location, link, contract #, etc.)", 
+          label: "Notes (optional)", 
+          rows: 3 %>
     </div>
   <% end %>
 
