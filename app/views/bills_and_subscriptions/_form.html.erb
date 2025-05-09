@@ -1,4 +1,4 @@
-<%= styled_form_with model: @bill, url: (@bill.new_record? ? bills_and_subscriptions_path : bills_and_subscription_path(@bill)), class: "space-y-4" do |f| %>
+<%= styled_form_with model: @bill, url: (@bill.new_record? ? bills_and_subscriptions_path : bills_and_subscription_path(@bill)), class: "space-y-4", data: { controller: "bill-form" } do |f| %>
   <% if @bill.errors.any? %>
     <%= render "shared/form_errors", model: @bill %>
   <% end %>
@@ -50,6 +50,24 @@
         Bill::STATUSES.map { |s| [s.titleize, s] },
         { prompt: "Select status", label: "Status" },
         { class: "form-field__input", required: true } %>
+
+    <!-- Bill Type selector -->
+    <%= f.select :bill_type,
+        Bill.bill_types.map { |k, v| [k.titleize == "Debt" ? "Debt Payment" : k.titleize, k] },
+        { prompt: "Select bill type", label: "Bill Type" },
+        { class: "form-field__input", id: "bill_type_select", required: true, 
+          "data-bill-form-target": "billTypeSelect", 
+          "data-action": "bill-form#toggleDebtAccountField" } %>
+
+    <!-- Debt Account dropdown, shown only if Bill Type is 'debt' -->
+    <div id="debt_account_field" data-bill-form-target="debtAccountField" style="display: none;">
+      <%= f.collection_select :debt_account_id,
+          Current.family.accounts.where(classification: "liability").order(:name),
+          :id, :name,
+          { prompt: "Select debt account (optional)", label: "Debt Account (optional)" },
+          { class: "form-field__input" } %>
+    </div>
+
   </section>
 
   <%# Details %>

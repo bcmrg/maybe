@@ -125,8 +125,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_26_025003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "start_date", null: false
+    t.string "category", default: "normal", null: false
+    t.uuid "debt_account_id"
+    t.string "bill_type", default: "normal", null: false
     t.index ["account_id"], name: "index_bills_on_account_id"
+    t.index ["category"], name: "index_bills_on_category"
     t.index ["category_id"], name: "index_bills_on_category_id"
+    t.index ["debt_account_id"], name: "index_bills_on_debt_account_id"
     t.index ["family_id", "name"], name: "index_bills_on_family_id_and_name", unique: true
     t.index ["family_id"], name: "index_bills_on_family_id"
   end
@@ -262,12 +267,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_26_025003) do
     t.boolean "data_enrichment_enabled", default: false
   end
 
+  create_table "family_reminder_preference_recipients", force: :cascade do |t|
+    t.bigint "family_reminder_preference_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_reminder_preference_id", "user_id"], name: "index_frp_recipients_on_frp_and_user", unique: true
+    t.index ["family_reminder_preference_id"], name: "index_frp_recipients_on_frp_id"
+    t.index ["user_id"], name: "index_family_reminder_preference_recipients_on_user_id"
+  end
+
   create_table "family_reminder_preferences", force: :cascade do |t|
     t.uuid "family_id", null: false
     t.integer "remind_days", default: [], array: true
     t.boolean "send_overdue_reminders", default: true
     t.string "digest_frequency", default: "individual"
-    t.string "reminder_recipients", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["family_id", "remind_days"], name: "index_reminder_prefs_on_family_and_days"
@@ -753,6 +767,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_26_025003) do
   add_foreign_key "bill_payments", "bills"
   add_foreign_key "bill_payments", "entries"
   add_foreign_key "bills", "accounts"
+  add_foreign_key "bills", "accounts", column: "debt_account_id"
   add_foreign_key "bills", "categories"
   add_foreign_key "bills", "families"
   add_foreign_key "budget_categories", "budgets"
@@ -762,6 +777,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_26_025003) do
   add_foreign_key "chats", "users"
   add_foreign_key "entries", "accounts"
   add_foreign_key "entries", "imports"
+  add_foreign_key "family_reminder_preference_recipients", "family_reminder_preferences"
+  add_foreign_key "family_reminder_preference_recipients", "users"
   add_foreign_key "family_reminder_preferences", "families"
   add_foreign_key "holdings", "accounts"
   add_foreign_key "holdings", "securities"

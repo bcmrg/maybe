@@ -45,7 +45,7 @@ class Settings::BillRemindersController < ApplicationController
       :send_overdue_reminders,
       :digest_frequency,
       remind_days: [],
-      reminder_recipients: []
+      reminder_recipient_ids: []
     )
   end
 end 

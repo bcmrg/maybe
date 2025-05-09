@@ -6,6 +6,9 @@
       <div>
         <div class="flex items-center gap-2 mb-1">
           <h2 class="text-2xl font-medium text-primary"><%= @bill.name %></h2>
+          <% if @bill.category %>
+            <%= render partial: "categories/badge", locals: { category: @bill.category } %>
+          <% end %>
           <% if @bill.paused? %>
             <div class="flex items-center gap-1 text-secondary text-xs bg-surface-inset px-2 py-0.5 rounded">
               <%= lucide_icon "pause", class: "w-3 h-3" %>
@@ -17,6 +20,13 @@
           <div class="flex items-center gap-1">
             <%= lucide_icon "calendar", class: "w-4 h-4" %>
             <span><%= @bill.frequency.titleize %></span>
+            <% if @bill.bill_type == "debt" %>
+            <span class="flex items-center gap-1">
+              <%= lucide_icon "badge-dollar-sign", class: "w-4 h-4 text-secondary" %>
+              <%= @bill.bill_type.titleize %>
+            </span>
+          <% end %>
+
           </div>
         </div>
       </div>
@@ -54,17 +64,6 @@
             </div>
 
             <div class="flex items-center justify-between text-sm">
-              <dt class="text-secondary">Category</dt>
-              <dd class="font-medium">
-                <% if @bill.category %>
-                  <%= render partial: "categories/badge", locals: { category: @bill.category } %>
-                <% else %>
-                  <%= render partial: "categories/badge", locals: { category: nil } %>
-                <% end %>
-              </dd>
-            </div>
-
-            <div class="flex items-center justify-between text-sm">
               <dt class="text-secondary">Payment account</dt>
               <dd class="font-medium">
                 <% if @bill.account %>
@@ -77,6 +76,17 @@
                 <% end %>
               </dd>
             </div>
+
+            <% if @bill.bill_type == "debt" %>
+              <% if @bill.debt_account %>
+                <div class="flex items-center justify-between text-sm">
+                  <dt class="text-secondary">Debt Account</dt>
+                  <dd class="font-medium">
+                    <span><%= @bill.debt_account.name %></span>
+                  </dd>
+                </div>
+              <% end %>
+            <% end %>
           </dl>
         </div>
       </details>

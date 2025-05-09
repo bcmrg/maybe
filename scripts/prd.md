@@ -12,35 +12,54 @@ The system helps users:
 
 # Core Features
 
-## Net Worth Dashboard
+## Net Worth Dashboard (Done)
 - **What it does**: Displays net worth (assets - debts) and its variation over time.
 - **Why it's important**: Gives users a clear view of their financial health.
 - **How it works**: Aggregates balances from all assets and debts. Allows drill-down into asset categories.
 
-## Asset and Debt Management
+## Asset and Debt Management (Done)
 - **What it does**: Allows users to manually or automatically track assets and debts.
 - **Why it's important**: Ensures net worth calculation is accurate and assets are up to date.
 - **How it works**: Users can add/edit assets, categorize them, and view activity/history for each.
 
-## Transaction Management
+## Transaction Management (Done)
 - **What it does**: Tracks all expenses, income, and transfers.
 - **Why it's important**: Enables users to understand where money is coming from and going.
 - **How it works**: Transactions can be manually added, imported from bank statements or CSVs, and eventually synced from banks. Categorization and editing supported.
 
-## Budgeting
+## Budgeting (Done)
 - **What it does**: Allows users to set monthly budgets per category.
 - **Why it's important**: Helps users control and plan their spending.
 - **How it works**: Monthly budgets are user-defined and tracked against actual spending. Overspending is flagged but not carried over.
 
-## Bills and Subscriptions
-- **What it does**: Manages recurring expenses like subscriptions or bills.
-- **Why it's important**: Helps users avoid missed payments.
-- **How it works**: Users add bills with due dates, mark them as paid, pause them, and receive email reminders.
+## Advanced Envelope Budgeting (Planned)
+- **What it does**: Provides a proactive budgeting system where users allocate funds into category envelopes and track spending against them.
+- **Why it's important**: Helps users enforce discipline by limiting spending to what is allocated, unlike simple budget tracking.
+- **How it works**:
+  - Users manually allocate funds into envelopes by category.
+  - Expenses reduce the allocated amount as they are categorized.
+  - Optionally, leftover funds can carry over to the next month.
 
-## Collaboration
+## Bills and Subscriptions (Partial)
+- **What it does**: Manages recurring expenses like subscriptions, bills, and debt/loan payments.
+- **Why it's important**: Helps users avoid missed payments and track debt payoff automatically.
+- **How it works**: 
+  - Users add bills with due dates, mark them as paid, pause them, and receive email reminders.
+  - **New**: Bills can be categorized as Normal Bill, Loan/Debt Payment, or Other.
+  - When a Loan/Debt Payment bill is marked as paid, it automatically reduces the balance of the corresponding debt in the system.
+
+## Collaboration (Done)
 - **What it does**: Enables sharing the account with family members.
 - **Why it's important**: Allows joint financial management.
 - **How it works**: Family members can be invited to view shared financial data.
+
+## Calendar View (Planned)
+- **What it does**: Provides a visual representation of upcoming financial obligations.
+- **Why it's important**: Helps users plan cash flow and avoid surprises.
+- **How it works**:
+  - Displays bills, debt payments, and other reminders in a calendar format.
+  - Allows filtering and marking items as paid directly from the calendar.
+  - Not planned for MVP but considered for future versions.
 
 # User Experience
 

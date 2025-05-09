@@ -40,11 +40,11 @@
         <div class="space-y-2">
           <% Current.family.users.each do |user| %>
             <div class="flex items-center gap-2">
-              <%= form.check_box :reminder_recipients,
+              <%= form.check_box :reminder_recipient_ids,
                   { multiple: true, 
-                    checked: @reminder_preference.reminder_recipients.include?(user.email),
+                    checked: @reminder_preference.reminder_recipients.include?(user),
                     data: { auto_submit_form_target: "auto" } },
-                  user.email,
+                  user.id,
                   nil %>
               <label class="text-sm text-secondary">
                 <%= user.display_name %> (<%= user.email %>)

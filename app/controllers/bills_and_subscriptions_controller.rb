@@ -109,47 +109,55 @@ class BillsAndSubscriptionsController < ApplicationController
       return redirect_to bills_and_subscription_path(@bill)
     end
 
-    # Create the entry with transaction
-    entry = account.entries.new(
-      date: params[:date] || Date.current,
-      amount: payment_amount,
-      currency: @bill.currency,
-      name: "Payment for #{@bill.name}",
-      entryable: Transaction.new(
-        category: @bill.category
+    ActiveRecord::Base.transaction do
+      # Create the entry with transaction
+      entry = account.entries.new(
+        date: params[:date] || Date.current,
+        amount: payment_amount,
+        currency: @bill.currency,
+        name: "Payment for #{@bill.name}",
+        entryable: Transaction.new(
+          category: @bill.category
+        )
       )
-    )
 
-    # Create the bill payment record
-    bill_payment = @bill.bill_payments.new(entry: entry)
+      # Create the bill payment record
+      bill_payment = @bill.bill_payments.new(entry: entry)
 
-    if entry.save && bill_payment.save
-      # Always advance the due date since bill amounts can vary
-      @bill.mark_as_paid!
-
-      flash[:notice] = "Payment was successfully recorded"
-      
-      respond_to do |format|
-        format.html { redirect_to bills_and_subscriptions_path }
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace(@bill, partial: "bills_and_subscriptions/bill", locals: { bill: @bill }),
-            turbo_stream.replace("modal", ""),
-            *flash_notification_stream_items
-          ]
+      # Save payment entry and bill payment
+      if entry.save && bill_payment.save
+        # If this is a debt bill, create a Transfer to the debt account
+        if @bill.debt? && @bill.debt_account.present?
+          transfer = Transfer.from_accounts(
+            from_account: account,
+            to_account: @bill.debt_account,
+            date: entry.date,
+            amount: payment_amount
+          )
+          transfer.save!
+          Rails.logger.info(
+            "Debt payment transfer created for bill ##{@bill.id}: " \
+            "Transfer ##{transfer.id}, Payment account: #{account.id}, " \
+            "Debt account: #{@bill.debt_account.id}, Amount: #{payment_amount}"
+          )
         end
-      end
-    else
-      flash[:error] = "Could not record payment"
-      
-      respond_to do |format|
-        format.html { redirect_to bills_and_subscription_path(@bill) }
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("modal", partial: "bills_and_subscriptions/payment_modal"),
-            *flash_notification_stream_items
-          ]
+        # Always advance the due date since bill amounts can vary
+        @bill.mark_as_paid!
+
+        flash[:notice] = "Payment was successfully recorded"
+        respond_to do |format|
+          format.html { redirect_to bills_and_subscriptions_path }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(@bill, partial: "bills_and_subscriptions/bill", locals: { bill: @bill }),
+              turbo_stream.replace("modal", ""),
+              *flash_notification_stream_items
+            ]
+          end
         end
+      else
+        flash[:error] = "Could not record payment"
+        raise ActiveRecord::Rollback
       end
     end
   end
@@ -171,6 +179,8 @@ class BillsAndSubscriptionsController < ApplicationController
         :account_id,
         :status,
         :next_due_date,
+        :bill_type,
+        :debt_account_id,
         auto_match_rule: {}
       )
     end

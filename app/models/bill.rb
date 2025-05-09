@@ -7,6 +7,7 @@ class Bill < ApplicationRecord
   belongs_to :family
   belongs_to :category, optional: true
   belongs_to :account, optional: true
+  belongs_to :debt_account, class_name: "Account", optional: true
   
   has_many :bill_payments, dependent: :destroy
   has_many :entries, through: :bill_payments
@@ -19,9 +20,11 @@ class Bill < ApplicationRecord
 
   monetize :amount
 
+  enum :bill_type, { normal: "normal", debt: "debt" }
+
   scope :active, -> { where(status: "active") }
   scope :paused, -> { where(status: "paused") }
-  scope :due_soon, -> { active.where("next_due_date <= ?", 7.days.from_now) }
+  scope :due_soon, -> { active.where("next_due_date >= ? AND next_due_date <= ?", Date.current, 7.days.from_now) }
   scope :overdue, -> { active.where("next_due_date < ?", Date.current) }
 
   def paused?

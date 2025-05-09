@@ -7,6 +7,9 @@ class FamilyReminderPreference < ApplicationRecord
   # Ensure arrays are never nil
   before_validation :ensure_arrays_present
 
+  has_many :family_reminder_preference_recipients, dependent: :destroy
+  has_many :reminder_recipients, through: :family_reminder_preference_recipients, source: :user
+
   private
 
   def ensure_arrays_present

@@ -68,13 +68,16 @@ gem "ruby-openai"
 # File Processing
 gem "roo", "~> 2.10.0"
 
+# Added for compatibility with Ruby 3.5+ and silence the deprecation warning
+gem "ostruct"
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
   gem "i18n-tasks"
   gem "erb_lint"
-  gem "dotenv-rails"
+  gem "dotenv-rails"  
 end
 
 group :development do
