@@ -89,11 +89,12 @@
             <% end %>
 
             <% if @bill.notes.present? %>
-              <div class="flex items-start justify-between text-sm">
-                <dt class="text-secondary pt-1">Notes</dt>
-                <dd class="font-medium max-w-lg text-primary whitespace-pre-line">
+              <hr class="my-4 border-gray-200">
+              <div class="w-full text-sm flex flex-col items-start">
+                <div class="text-secondary mb-0.5">Notes</div>
+                <div class="font-normal text-primary whitespace-pre-line text-left w-full break-words leading-normal flex items-start">
                   <%= auto_link(simple_format(h(@bill.notes)), html: { target: "_blank", rel: "noopener" }) %>
-                </dd>
+                </div>
               </div>
             <% end %>
           </dl>

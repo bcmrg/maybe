@@ -45,34 +45,32 @@
             label: "Start Date" %>
       </div>
     </div>
-
-    <%= f.select :status,
-        Bill::STATUSES.map { |s| [s.titleize, s] },
-        { prompt: "Select status", label: "Status" },
-        { class: "form-field__input", required: true } %>
-
-    <!-- Bill Type selector -->
-    <%= f.select :bill_type,
-        Bill.bill_types.map { |k, v| [k.titleize == "Debt" ? "Debt Payment" : k.titleize, k] },
-        { prompt: "Select bill type", label: "Bill Type" },
-        { class: "form-field__input", id: "bill_type_select", required: true, 
-          "data-bill-form-target": "billTypeSelect", 
-          "data-action": "bill-form#toggleDebtAccountField" } %>
-
-    <!-- Debt Account dropdown, shown only if Bill Type is 'debt' -->
-    <div id="debt_account_field" data-bill-form-target="debtAccountField" style="display: none;">
-      <%= f.collection_select :debt_account_id,
-          Current.family.accounts.where(classification: "liability").order(:name),
-          :id, :name,
-          { prompt: "Select debt account (optional)", label: "Debt Account (optional)" },
-          { class: "form-field__input" } %>
-    </div>
-
   </section>
 
   <%# Details %>
   <%= disclosure "Details", default_open: false do %>
     <div class="space-y-3">
+        <%= f.select :status,
+          Bill::STATUSES.map { |s| [s.titleize, s] },
+          { prompt: "Select status", label: "Status" },
+          { class: "form-field__input", required: true } %>
+
+      <!-- Bill Type selector -->
+      <%= f.select :bill_type,
+          Bill.bill_types.map { |k, v| [k.titleize == "Debt" ? "Debt Payment" : k.titleize, k] },
+          { prompt: "Select bill type", label: "Bill Type" },
+          { class: "form-field__input", id: "bill_type_select", required: true, 
+            "data-bill-form-target": "billTypeSelect", 
+            "data-action": "bill-form#toggleDebtAccountField" } %>
+
+      <!-- Debt Account dropdown, shown only if Bill Type is 'debt' -->
+      <div id="debt_account_field" data-bill-form-target="debtAccountField" style="display: none;">
+        <%= f.collection_select :debt_account_id,
+            Current.family.accounts.where(classification: "liability").order(:name),
+            :id, :name,
+            { prompt: "Select debt account (optional)", label: "Debt Account (optional)" },
+            { class: "form-field__input" } %>
+      </div>
       <%= f.date_field :next_due_date,
           class: "form-field__input",
           required: true,
@@ -95,7 +93,7 @@
       <%= f.text_area :notes, 
           class: "form-field__input min-h-[80px] resize-y", 
           placeholder: "Add notes (e.g. payment location, link, contract #, etc.)", 
-          label: "Notes (optional)", 
+          label: "Notes", 
           rows: 3 %>
     </div>
   <% end %>

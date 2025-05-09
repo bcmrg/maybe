@@ -71,6 +71,9 @@ gem "roo", "~> 2.10.0"
 # Added for compatibility with Ruby 3.5+ and silence the deprecation warning
 gem "ostruct"
 
+# Added for auto_link helper in views
+gem "rails_autolink"
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
   gem "brakeman", require: false
